@@ -2,61 +2,68 @@
 const inputEl = document.querySelector(".inputEl");
 const addButton = document.querySelector(".addToDoBtn");
 const todos = document.querySelector(".todos");
-const todolist = []
 
 
+// * CRUD -create, read , delete
 
-// Delete Todo
+// createTodoStore
+function createTodoStore() {
+  let todostore = JSON.parse(localStorage.getItem("todos"));
+  if (todostore === null) {
+    localStorage.setItem("todos", JSON.stringify([]));
+    return todostore;
+  } else {
+    return todostore;
+  }
+}
+createTodoStore();
+
+//* Delete Todo
 function deleTodo() {
-    const delButtons = document.querySelectorAll(".delBtn");
-    delButtons.forEach(function (button, index) {
-        console.log(button);
-        button.onclick = function () {
-            console.log("clicked");
-            console.log(index);
-            todolist.splice(index, 1)
-            this.parentElement.style.display = "none";
-            console.log(todolist);
-        }
-    })
+  const delButtons = document.querySelectorAll(".delBtn");
+  let todostore = createTodoStore();
+console.log(delButtons);
+  delButtons.forEach(function (button, index) {
+    button.onclick = function () {
+      todostore.splice(index, 1);
+      localStorage.setItem("todos", JSON.stringify(todostore));
+      console.log(todostore);
+      displayTodo();
+      location.reload();
+    };
+  });
 }
 
-
-// create Todo 
+//* create Todo
 function createTodo() {
-    todolist.push(inputEl.value);
-    const singleTodo = document.createElement("p")
-    const delbtn = document.createElement("button")
-    delbtn.innerHTML = "x"
-    delbtn.className = "btn btn-danger delBtn"
+  let todostore = createTodoStore();
+  todostore.push(inputEl.value);
 
-    todolist.forEach(function (todoitem, itemid) {
-        singleTodo.innerText = todoitem;
-        singleTodo.appendChild(delbtn)
-        delbtn.className = `btn btn-danger delBtn ${itemid} `
-    }
-    );
-    todos.appendChild(singleTodo); //inject each todo within the div of class todos.
+  localStorage.setItem("todos", JSON.stringify(todostore));
 
-    deleTodo()
-
+  displayTodo();
+  deleTodo();
 }
+//* displayTodo
+function displayTodo() {
+  let todostore = createTodoStore();
+
+  todos.innerHTML = "";
+
+  todostore.forEach(function (todoitem, itemid) {
+    const singleTodo = document.createElement("p");
+    const delbtn = document.createElement("button");
+    delbtn.innerHTML = "delete";
+    delbtn.className = "btn btn-danger delBtn";
+
+    singleTodo.innerText = todoitem;
+    singleTodo.appendChild(delbtn);
+    delbtn.className = `btn btn-danger delBtn ${itemid} `;
+
+    todos.appendChild(singleTodo); //inject each todo within the div of class todos.
+  });
+}
+displayTodo();
+deleTodo();
 // inputEl.onchange = createTodo
-addButton.onclick = createTodo
-
-
-
-
-
-
-
-
-
-//? CRUD - Create Read Update and Delete
-
-// // TODO Delete Todo .
-//TODO Update Todo .
-//TODO Design .
-
-//TODO Create persistant todos via localstorage
-//TODO 
+addButton.onclick = createTodo;
